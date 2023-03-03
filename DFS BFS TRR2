@@ -1,0 +1,181 @@
+#include <bits/stdc++.h>
+#include <vector>
+using namespace std;
+
+int n;
+vector<vector<int>> vs(10005);
+bitset<10005>r;
+bitset<10005>v;
+queue <int> q;
+queue <int> d;
+deque <int> s;
+
+void inkq(queue<int> q)
+{
+  while (!q.empty())
+  {
+    cout << q.front() << " ";
+    q.pop();
+  }
+}
+void inkqq(deque<int> q)
+{
+  while (!q.empty())
+  {
+    cout << q.front() << " ";
+    q.pop_front();
+  }
+}
+void inkqtt(std::queue<int> q)
+{
+  set<int> x;
+  while (!q.empty())
+  {
+    x.insert(q.front());
+    q.pop();
+  }
+  for(int i:x)
+  cout<<i<<" ";
+}
+
+void DFS(int i)
+{
+	v[i]=1;
+	r[i]=1;
+	q.push(i);
+	s.push_back(i);
+	inkqq(s);
+	for(int l=s.size()/4;l<5;l++)
+		cout<<"	";
+	inkq(q);
+	cout<<endl;
+	for(int j=0;j<vs[i].size();j++)
+	{
+		if(!v[vs[i][j]])
+		DFS(vs[i][j]);
+	}
+	s.pop_back();
+	if(q.size()<n)
+	{
+		inkqq(s);
+		for(int l=s.size()/4;l<5;l++)
+		cout<<"	";
+		inkq(q);
+		cout<<endl;
+	}
+}
+
+void BFS(int k)
+{
+	int het=0;
+	r[k]=1;
+	d.push(k);
+	while(het==0)
+	{
+		if(q.empty())
+		{
+			inkq(d);
+			for(int l=d.size()/4;l<5;l++)
+				cout<<"	";
+			cout<<"-1"<<endl;
+		}
+		else if(d.empty())
+		{
+			het=1;
+			cout<<"-1";
+			for(int l=d.size()/4;l<5;l++)
+				cout<<"	";
+			inkqtt(q);
+			cout<<endl;
+		}
+		else
+		{
+			inkq(d);
+			for(int l=d.size()/4;l<5;l++)
+				cout<<"	";
+			inkqtt(q);
+			cout<<endl;
+		}
+		int i=d.front();
+		d.pop();
+		if(v[i]==0&&i>0)
+		{
+			v[i]=1;
+			q.push(i);
+		}
+		for(int j=0;j<vs[i].size();j++)
+		{
+			if(!r[vs[i][j]])
+			{
+				r[vs[i][j]]=1;
+				d.push(vs[i][j]);
+			}
+		}
+	}
+}
+int main()
+{
+	cout << "Nhap n: \n";
+	cin>>n;
+	int z[n][n];
+	cout << "Nhap ma tran ke: \n";
+	for(int i=1;i<=n;i++)
+	{
+		for(int j=1;j<=n;j++)
+		cin>>z[i][j];
+	}
+	cout << "--------------------------"<<endl;
+	cout << "Danh sach canh la: \n";
+	for(int i=1;i<n;i++)
+	{
+		for(int j=i+1;j<=n;j++)
+		{
+			if(z[i][j]==1)
+			{
+				cout<<i<<" "<<j<<endl;
+				vs[i].push_back(j);
+				vs[j].push_back(i);
+			}
+		}
+	}
+	cout << "--------------------------"<<endl;
+	cout << "Danh sach ke la: \n";
+	for(int i=1;i<=n;i++)
+	{
+		cout<<i<<": ";
+		for(int j:vs[i])
+		cout<<j<<" ";
+		cout<<endl;
+	}
+	
+	int u;
+	cout << "--------------------------"<<endl;
+	cout << "Nhap dinh xet DFS: \n";
+	cin>>u;
+	cout<<"Trang thai hang doi"<<"			"<<"Danh sach dinh duoc duyet"<<endl;
+	DFS(u);
+	cout << "Ket qua duyet DFS theo dinh " << u << " la:\n";
+	inkq(q);
+	cout<<endl;
+	r.reset();
+	v.reset();
+	while(!q.empty())
+		q.pop();
+	cout << "--------------------------"<<endl;
+	cout << "Nhap dinh xet BFS: \n";
+	cin>>u;
+	cout<<"Trang thai hang doi"<<"			"<<"Danh sach dinh duoc duyet"<<endl;
+	BFS(u);
+	cout << "Ket qua duyet BFS theo dinh " << u << " la:\n";
+	inkq(q);
+}
+/*
+7
+0 1 1 1 0 0 0
+1 0 0 1 1 0 0
+1 0 0 1 0 1 0
+1 1 1 0 1 1 1
+0 1 0 1 0 0 1
+0 0 1 1 0 0 1
+0 0 0 1 1 1 0
+*/
